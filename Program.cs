@@ -10,7 +10,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7005") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://ecommerceapiwebapp-daege4dme6bqbsak.uksouth-01.azurewebsites.net") });
 builder.Services.AddScoped<ProductService>();
 /* builder.Services.AddOptions();
 builder.Services.AddAuthorizationCore();
