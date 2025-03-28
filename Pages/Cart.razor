@@ -1,0 +1,50 @@
+@page "/cart"
+@using EcommerceFrontend.AuthServices
+@using EcommerceFrontend.Models
+@inject HttpClient Http
+@inject AuthService AuthService
+
+<h3>Your Cart</h3>
+
+@if (cartItems == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!cartItems.Any())
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in cartItems)
+            {
+                <tr>
+                    <td>@item.Product?.Name</td>
+                    <td>@item.Product?.Price</td>
+                    <td>@item.Quantity</td>
+                    <td>@((item.Product?.Price ?? 0) * item.Quantity).ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<CartItem> cartItems;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.SetAuthHeaderAsync();
+        cartItems = await Http.GetFromJsonAsync<List<CartItem>>($"api/cart");
+    }
+}

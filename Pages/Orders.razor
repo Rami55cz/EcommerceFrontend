@@ -1,0 +1,49 @@
+@page "/orders"
+@using EcommerceFrontend.AuthServices
+@using EcommerceFrontend.Models
+@inject HttpClient Http
+@inject AuthService AuthService
+
+<h3>Your Orders</h3>
+
+@if (orders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!orders.Any())
+{
+    <p>You haven't placed any orders yet.</p>
+}
+else
+{
+    @foreach (var order in orders)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                <strong>Order ID:</strong> @order.Id |
+                <strong>Date:</strong> @order.OrderDate.ToShortDateString() |
+                <strong>Status:</strong> @order.Status
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in order.Items)
+                {
+                    <li class="list-group-item">
+                        <strong>@item.Product?.Name</strong> —
+                        Quantity: @item.Quantity |
+                        Unit Price: @item.UnitPrice.ToString("C")
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
+
+@code {
+    private List<Order> orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.SetAuthHeaderAsync();
+        orders = await Http.GetFromJsonAsync<List<Order>>($"api/order") ?? new();
+    }
+}
