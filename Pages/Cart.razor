@@ -33,10 +33,15 @@ else
                     <td>@item.Product?.Price</td>
                     <td>@item.Quantity</td>
                     <td>@((item.Product?.Price ?? 0) * item.Quantity).ToString("C")</td>
+
+                    <button class="btn btn-success me-2" @onclick="() => UpdateQuantity(item)">Update</button>
+                    <button class="btn btn-danger" @onclick="() => RemoveItem(item.ProductId)">Remove</button>
                 </tr>
             }
         </tbody>
     </table>
+
+    <button class="btn btn-primary" @onclick="PlaceOrder">Place Order</button>
 }
 
 @code {
@@ -46,5 +51,26 @@ else
     {
         await AuthService.SetAuthHeaderAsync();
         cartItems = await Http.GetFromJsonAsync<List<CartItem>>($"api/cart");
+    }
+
+    private async Task UpdateQuantity(CartItem item){
+        await AuthService.SetAuthHeaderAsync();
+        var payload = new {
+            ProductId = item.ProductId,
+            Quantity = item.Quantity
+        };
+        await Http.PutAsJsonAsync("api/cart", payload);
+    }
+
+    private async Task RemoveItem(int productId){
+        await AuthService.SetAuthHeaderAsync();
+        await Http.DeleteAsync($"api/cart/{productId}");
+        cartItems = await Http.GetFromJsonAsync<List<CartItem>>("api/cart");
+    }
+
+    private async Task PlaceOrder(){
+        await AuthService.SetAuthHeaderAsync();
+        await Http.PostAsync("api/order", null);
+        cartItems.Clear();
     }
 }

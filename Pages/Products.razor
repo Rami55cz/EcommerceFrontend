@@ -26,12 +26,12 @@ else
                         <p class="card-text">@product.Description</p>
                         <p><strong>£@product.Price</strong></p>
                         <p>In stock: @product.Stock</p>
-                        @if (userRole != "Administrator")
+                        @if (userRole != "administrator")
                         {
                             <button class="btn btn-primary" @onclick="() => AddToCart(product.Id)">Add to Cart</button>
                             <button class="btn btn-primary" @onclick="() => RemoveFromCart(product.Id)">Remove</button>
                         }
-                        @if (userRole == "Administrator")
+                        @if (userRole == "administrator")
                         {
                             <button class="btn btn-success">Add Product</button>
                             <button class="btn btn-warning me-2" @onclick="() => EditProduct(product.Id)">Edit</button>
@@ -53,6 +53,7 @@ else
     {
 
         await AuthService.SetAuthHeaderAsync();
+        
         products = await ProductService.GetProductsAsync();
     }
 
