@@ -1,5 +1,6 @@
 using Microsoft.JSInterop;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace EcommerceFrontend.AuthServices
 {
@@ -33,6 +34,12 @@ namespace EcommerceFrontend.AuthServices
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
             }
+        }
+
+        public async Task<string> GetUserRoleAsync(){
+            await SetAuthHeaderAsync();
+            var role = await _httpClient.GetFromJsonAsync<string>("api/userprofiles/role");
+            return role ?? "customer";
         }
     }
 }
