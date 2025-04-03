@@ -6,5 +6,7 @@ namespace EcommerceFrontend.Models{
         public string? Description { get; set; }
         public int Stock { get; set; }
         public string? ImageUrl { get; set; }
+        public List<Review> Reviews { get; set; } = new();
+
     }
 }
