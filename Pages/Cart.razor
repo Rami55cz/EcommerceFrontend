@@ -30,7 +30,7 @@ else
                     <td>@item.Product?.Name</td>
                     <td>@item.Product?.Price</td>
                     <td>@item.Quantity</td>
-                    <td>@((item.Product?.Price ?? 0) * item.Quantity).ToString("C")</td>
+                    <td>@((item.Product?.Price ?? 0) * item.Quantity)</td>
 
                     <button class="btn btn-success me-2" @onclick="() => UpdateQuantity(item)">Update</button>
                     <button class="btn btn-danger" @onclick="() => RemoveItem(item.ProductId)">Remove</button>
