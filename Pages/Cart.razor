@@ -64,12 +64,14 @@ else
         }
         cartItems = await Http.GetFromJsonAsync<List<CartItem>>($"api/cart");
         cartItems = cartItems.Where(x => x.UserId == CurrentUser.Id).ToList();
+        Console.WriteLine("Cart Items");
 
         foreach (var userItem in cartItems){
  
             var product = await ProductService.GetProductByIdAsync(userItem.ProductId);
             userItem.Product = product; // Assign the product to the userItem 
             userItems.Add(userItem);
+            Console.WriteLine($"Cart Items{userItem}");
         }
     }
 
