@@ -62,7 +62,7 @@ else
         {
             // You are not logged in hence you receive a 401 Unauthorized status code
         }
-        cartItems = await Http.GetFromJsonAsync<List<CartItem>>($"api/cart");
+        cartItems = await Http.GetFromJsonAsync<List<CartItem>>($"api/cart/{CurrentUser.Id}");
         // cartItems = cartItems.Where(x => x.UserId == CurrentUser.Id).ToList();
         Console.WriteLine("Cart Items");
 
