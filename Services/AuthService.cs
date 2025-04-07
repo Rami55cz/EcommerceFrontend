@@ -35,11 +35,12 @@ namespace EcommerceFrontend.AuthServices
                     new AuthenticationHeaderValue("Bearer", token);
             }
         }
+        /* 
 
         public async Task<string> GetUserRoleAsync(){
             await SetAuthHeaderAsync();
             var role = await _httpClient.GetFromJsonAsync<string>("api/userprofiles/role");
             return role ?? "customer";
-        }
+        } */
     }
 }

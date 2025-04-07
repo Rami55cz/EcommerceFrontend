@@ -9,11 +9,11 @@
 
 <h3>Products</h3>
 
-@if (!string.IsNullOrEmpty(errorMessage))
+@* @if (!string.IsNullOrEmpty(errorMessage))
 {
     <div class="alert alert-danger">@errorMessage</div>
-}
-else if (products == null)
+} *@
+@if (products == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -24,7 +24,7 @@ else
         {
             <div class="col-md-4">
                 <div class="card mb-4">
-                    <img src="@product.ImageUrl" class="card-img-top" onerror="this.src='https://via.placeholder.com/300'" />
+                    @* <img src="@product.ImageUrl" class="card-img-top" onerror="this.src='https://via.placeholder.com/300'" /> *@
                     <div class="card-body">
                         <h5 class="card-title">@product.Name</h5>
                         <p class="card-text">@product.Description</p>
@@ -51,24 +51,73 @@ else
 @code {
     private List<Product>? products;
     private string userRole = "";
+    private UserProfile CurrentUser = new UserProfile();
     private string errorMessage;
 
-    protected override async Task OnInitializedAsync()
+    @* protected override async Task OnInitializedAsync()
     {
         try
         {
-            await AuthService.SetAuthHeaderAsync();
-            userRole = await AuthService.GetUserRoleAsync();
-            products = await ProductService.GetProductsAsync();
+            try{
+                await AuthService.SetAuthHeaderAsync();
+            }
+            catch{
+                Console.WriteLine("AuthHeader");
+            }
+            
+            var response = await Http.GetAsync("api/userprofiles/me");
+ 
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("UserProfiles Success");
+                // User is logged in and can access the profile
+                CurrentUser = await response.Content.ReadFromJsonAsync<UserProfile>() ?? new UserProfile();
+                    userRole = CurrentUser.Role;
+            }
+            try{
+                products = await ProductService.GetProductsAsync();
+            }
+            catch{
+                Console.WriteLine("ProductService");
+            }
+            
         }
         catch (HttpRequestException httpEx)
         {
             errorMessage = $"Unable to load products. {httpEx.Message}";
+            Console.WriteLine("ProductService");
         }
         catch (Exception ex)
         {
             errorMessage = $"Unexpected error: {ex.Message}";
+            Console.WriteLine("UserProfiles Success");
         }
+    } *@
+
+    protected override async Task OnInitializedAsync(){
+        products = await ProductService.GetProductsAsync();       
+ 
+        try
+        {
+            await AuthService.SetAuthHeaderAsync();
+            var response = await Http.GetAsync("api/userprofiles/me");
+ 
+            if (response.IsSuccessStatusCode)
+            {
+                // User is logged in and can access the profile
+                CurrentUser = await response.Content.ReadFromJsonAsync<UserProfile>() ?? new UserProfile();
+            }
+            else
+            {
+                // You are not logged in hence you receive a 401 Unauthorized status code
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while fetching the profile: {ex.Message}");
+        }
+ 
+ 
     }
 
     private async Task AddToCart(int productId)
