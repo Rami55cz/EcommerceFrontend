@@ -1,8 +1,10 @@
 @page "/cart"
 @using EcommerceFrontend.AuthServices
 @using EcommerceFrontend.Models
+@using EcommerceFrontend.Services
 @inject HttpClient Http
 @inject AuthService AuthService
+@inject ProductService ProductService
 
 <h3>Your Cart</h3>
 
@@ -22,7 +24,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in cartItems)
+            @foreach (var item in userItems)
             {
                 <tr>
                     <td>@item.Product?.Name</td>
@@ -41,30 +43,56 @@ else
 }
 
 @code {
-    private List<CartItem> cartItems;
+    private List<CartItem> cartItems = new();
+    private List<CartItem> userItems = new();
+    private UserProfile CurrentUser = new UserProfile();
 
     protected override async Task OnInitializedAsync()
     {
         await AuthService.SetAuthHeaderAsync();
+
+        var response = await Http.GetAsync("api/userprofiles/me");
+
+        if (response.IsSuccessStatusCode)
+        {
+            // User is logged in and can access the profile
+            CurrentUser = await response.Content.ReadFromJsonAsync<UserProfile>() ?? new UserProfile();
+        }
+        else
+        {
+            // You are not logged in hence you receive a 401 Unauthorized status code
+        }
         cartItems = await Http.GetFromJsonAsync<List<CartItem>>($"api/cart");
+        cartItems = cartItems.Where(x => x.UserId == CurrentUser.Id).ToList();
+
+        foreach (var userItem in cartItems){
+ 
+            var product = await ProductService.GetProductByIdAsync(userItem.ProductId);
+            userItem.Product = product; // Assign the product to the userItem 
+            userItems.Add(userItem);
+        }
     }
 
-    private async Task UpdateQuantity(CartItem item){
+    private async Task UpdateQuantity(CartItem item)
+    {
         await AuthService.SetAuthHeaderAsync();
-        var payload = new {
+        var payload = new
+        {
             ProductId = item.ProductId,
             Quantity = item.Quantity
         };
         await Http.PutAsJsonAsync("api/cart", payload);
     }
 
-    private async Task RemoveItem(int productId){
+    private async Task RemoveItem(int productId)
+    {
         await AuthService.SetAuthHeaderAsync();
         await Http.DeleteAsync($"api/cart/{productId}");
         cartItems = await Http.GetFromJsonAsync<List<CartItem>>("api/cart");
     }
 
-    private async Task PlaceOrder(){
+    private async Task PlaceOrder()
+    {
         await AuthService.SetAuthHeaderAsync();
         await Http.PostAsync("api/order", null);
         cartItems.Clear();
