@@ -1,9 +1,13 @@
 @page "/login"
 @inject NavigationManager NavManager
 
-<h3>Login with GitHub</h3>
-
-<button @onclick="LoginWithGitHub">Sign In</button>
+<div class="text-center mt-5">
+    <h2>Welcome Back 👋</h2>
+    <p>Please log in using your GitHub account to continue.</p>
+    <button class="btn btn-dark btn-lg mt-3" @onclick="LoginWithGitHub">
+        <i class="bi bi-github me-2"></i> Sign in with GitHub
+    </button>
+</div>
 
 @code {
     private void LoginWithGitHub()

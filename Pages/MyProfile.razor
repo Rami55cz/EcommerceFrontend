@@ -4,52 +4,56 @@
 @inject AuthService AuthService
 @inject NavigationManager NavManager
 
-<h3>My Profile</h3>
+<h3 class="mb-4 text-center text-primary">My Profile</h3>
 
 @if (profile == null)
 {
-    <p>Loading...</p>
+    <div class="text-center">
+        <p><em>Loading your profile...</em></p>
+    </div>
 }
 else
 {
-    <EditForm Model="profile" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="profile" OnValidSubmit="HandleValidSubmit" class="card shadow p-4 mx-auto" style="max-width: 600px;">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
-        <div>
-            <label>Username: </label>
-            <InputText @bind-Value="profile.Username" disabled />
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <InputText @bind-Value="profile.Username" class="form-control" disabled />
         </div>
-        <div>
-            <label>First Name: </label>
-            <InputText @bind-Value="profile.FirstName" />
+        <div class="mb-3">
+            <label class="form-label">First Name</label>
+            <InputText @bind-Value="profile.FirstName" class="form-control" />
         </div>
-        <div>
-            <label>Last Name: </label>
-            <InputText @bind-Value="profile.LastName" />
+        <div class="mb-3">
+            <label class="form-label">Last Name</label>
+            <InputText @bind-Value="profile.LastName" class="form-control" />
         </div>
-        <div>
-            <label>Address: </label>
-            <InputText @bind-Value="profile.Address" />
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <InputText @bind-Value="profile.Address" class="form-control" />
         </div>
-        <div>
-            <label>Email: </label>
-            <InputText @bind-Value="profile.Email" />
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <InputText @bind-Value="profile.Email" class="form-control" />
         </div>
-        <div>
-            <label>Phone Number: </label>
-            <InputText @bind-Value="profile.PhoneNumber" />
+        <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            <InputText @bind-Value="profile.PhoneNumber" class="form-control" />
         </div>
-        <button type="submit">Update Profile</button>
+
+        <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+
+        @if (!string.IsNullOrEmpty(confirmationMessage))
+        {
+            <div class="alert alert-success mt-3" role="alert">
+                @confirmationMessage
+            </div>
+        }
     </EditForm>
-    
-    @if (!string.IsNullOrEmpty(confirmationMessage))
-    {
-        <div class="alert alert-success" role="alert">
-            @confirmationMessage
-        </div>
-    }
 }
+
 
 @code {
     UserProfileModel profile = new UserProfileModel();

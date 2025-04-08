@@ -14,13 +14,14 @@
 }
 else
 {
-    <table class="table">
-        <thead>
+    <table class="table table-hover">
+        <thead class="table-light">
             <tr>
                 <th>Product</th>
                 <th>Price</th>
-                <th>Quantity</th>
+                <th style="width: 100px;">Qty</th>
                 <th>Total</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -28,18 +29,25 @@ else
             {
                 <tr>
                     <td>@item.Product?.Name</td>
-                    <td>@item.Product?.Price</td>
-                    <td>@item.Quantity</td>
-                    <td>@((item.Product?.Price ?? 0) * item.Quantity)</td>
-
-                    <button class="btn btn-success me-2" @onclick="() => UpdateQuantity(item)">Update</button>
-                    <button class="btn btn-danger" @onclick="() => RemoveItem(item.ProductId)">Remove</button>
+                    <td>£@item.Product?.Price</td>
+                    <td>
+                        <input type="number" class="form-control" @bind="item.Quantity" min="1" />
+                    </td>
+                    <td>£@((item.Product?.Price ?? 0) * item.Quantity)</td>
+                    <td>
+                        <button class="btn btn-sm btn-success me-2" @onclick="() => UpdateQuantity(item)">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveItem(item.ProductId)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <button class="btn btn-primary" @onclick="PlaceOrder">Place Order</button>
+    <button class="btn btn-primary mt-3" @onclick="PlaceOrder">Place Order</button>
 }
 
 @code {
