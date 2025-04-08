@@ -23,26 +23,26 @@ else
         @foreach (var product in products)
         {
             <div class="col-md-4">
-            <div class="card shadow-sm border-0 mb-4">
-                <img src="@product.ImageUrl ?? "https://via.placeholder.com/300"" class="card-img-top" style="object-fit: cover; height: 200px;" />
-                <div class="card-body">
-                    <h5 class="card-title text-primary">@product.Name</h5>
-                    <p class="card-text">@product.Description</p>
-                    <p class="fw-bold">£@product.Price</p>
-                    <p class="text-muted">Stock: @product.Stock</p>
+                <div class="card mb-4">
+                    @* <img src="@product.ImageUrl" class="card-img-top" onerror="this.src='https://via.placeholder.com/300'" /> *@
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Description</p>
+                        <p><strong>£@product.Price</strong></p>
+                        <p>In stock: @product.Stock</p>
 
-                    @if (userRole == "administrator")
-                    {
-                        <button class="btn btn-outline-warning me-2" @onclick="() => EditProduct(product.Id)">Edit</button>
-                        <button class="btn btn-outline-danger" @onclick="() => DeleteProduct(product.Id)">Delete</button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-primary w-100" @onclick="() => AddToCart(product.Id)">Add to Cart</button>
-                    }
+                        @if (userRole == "administrator")
+                        {
+                            <button class="btn btn-warning me-2" @onclick="() => EditProduct(product.Id)">Edit</button>
+                            <button class="btn btn-danger" @onclick="() => DeleteProduct(product.Id)">Delete</button>
+                        }
+                        else{
+                            <button class="btn btn-primary" @onclick="() => AddToCart(product.Id)">Add to Cart</button>
+
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
         }
     </div>
 }
