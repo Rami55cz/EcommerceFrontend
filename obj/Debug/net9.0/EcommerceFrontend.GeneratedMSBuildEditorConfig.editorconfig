@@ -60,10 +60,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcT3JkZXJzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/EcommerceApp/EcommerceFrontend/Pages/Products.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdHMucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
 [c:/EcommerceApp/EcommerceFrontend/Pages/TokenReceiver.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG9rZW5SZWNlaXZlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -79,3 +75,7 @@ build_metadata.AdditionalFiles.CssScope = b-ut72fabvwp
 [c:/EcommerceApp/EcommerceFrontend/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-dqel5r0xly
+
+[c:/EcommerceApp/EcommerceFrontend/Pages/Products.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-k43idear5z
