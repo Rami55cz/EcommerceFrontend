@@ -106,6 +106,7 @@
         {
             // You can update with or without image
             response = await Http.PutAsync($"api/product/{ProductId}", content);
+            content.Add(new StringContent(ProductId.ToString()!), "Id");
         }
         else
         {
