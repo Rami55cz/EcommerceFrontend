@@ -3,7 +3,6 @@
 
 @using EcommerceFrontend.Models
 @using EcommerceFrontend.AuthServices
-@using System.Globalization;
 @inject HttpClient Http
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
@@ -67,6 +66,7 @@
 
         if (ProductId.HasValue)
         {
+            // Load the existing product for editing
             var loadedProduct = await Http.GetFromJsonAsync<Product>($"api/product/{ProductId.Value}");
             if (loadedProduct != null)
             {
@@ -88,7 +88,7 @@
         {
             { new StringContent(product.Name ?? ""), "Name" },
             { new StringContent(product.Description ?? ""), "Description" },
-            { new StringContent(product.Price.ToString(CultureInfo.InvariantCulture)), "Price" },
+            { new StringContent(product.Price.ToString()), "Price" },
             { new StringContent(product.Stock.ToString()), "Stock" }
         };
 
@@ -106,7 +106,6 @@
         {
             // You can update with or without image
             response = await Http.PutAsync($"api/product/{ProductId}", content);
-            content.Add(new StringContent(ProductId.ToString()!), "Id");
         }
         else
         {
