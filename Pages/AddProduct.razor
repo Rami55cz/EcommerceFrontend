@@ -1,0 +1,129 @@
+@page "/add-product"
+@page "/add-product/{ProductId:int}"
+
+@using EcommerceFrontend.Models
+@using EcommerceFrontend.AuthServices
+@inject HttpClient Http
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h3 class="text-center mb-4 text-primary">
+    @(ProductId.HasValue ? "Edit Product" : "Add New Product")
+</h3>
+
+<EditForm Model="product" OnValidSubmit="HandleSubmit" class="card shadow p-4 mx-auto" style="max-width: 600px;">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <InputText @bind-Value="product.Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <InputText @bind-Value="product.Description" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Price (£)</label>
+        <InputNumber @bind-Value="product.Price" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Stock</label>
+        <InputNumber @bind-Value="product.Stock" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Upload Image</label>
+        <InputFile OnChange="HandleImageUpload" />
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">
+        @(ProductId.HasValue ? "Update Product" : "Add Product")
+    </button>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success mt-3 text-center" role="alert">
+            @successMessage
+        </div>
+    }
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? ProductId { get; set; }
+
+    private Product product = new();
+    private IBrowserFile? imageFile;
+    private string successMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.SetAuthHeaderAsync();
+
+        if (ProductId.HasValue)
+        {
+            // Load the existing product for editing
+            var loadedProduct = await Http.GetFromJsonAsync<Product>($"api/product/{ProductId.Value}");
+            if (loadedProduct != null)
+            {
+                product = loadedProduct;
+            }
+        }
+    }
+
+    private void HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        imageFile = e.File;
+    }
+
+    private async Task HandleSubmit()
+    {
+        await AuthService.SetAuthHeaderAsync();
+
+        var content = new MultipartFormDataContent
+        {
+            { new StringContent(product.Name ?? ""), "Name" },
+            { new StringContent(product.Description ?? ""), "Description" },
+            { new StringContent(product.Price.ToString()), "Price" },
+            { new StringContent(product.Stock.ToString()), "Stock" }
+        };
+
+        if (imageFile != null)
+        {
+            var stream = imageFile.OpenReadStream(maxAllowedSize: 10_000_000);
+            var fileContent = new StreamContent(stream);
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(imageFile.ContentType);
+            content.Add(fileContent, "Image", imageFile.Name);
+        }
+
+        HttpResponseMessage response;
+
+        if (ProductId.HasValue)
+        {
+            // You can update with or without image
+            response = await Http.PutAsync($"api/product/{ProductId}", content);
+        }
+        else
+        {
+            response = await Http.PostAsync("api/product/upload", content);
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            successMessage = ProductId.HasValue ? "Product updated successfully!" : "Product added successfully!";
+            if (!ProductId.HasValue)
+            {
+                product = new(); // Reset form only if adding
+                imageFile = null;
+            }
+        }
+        else
+        {
+            successMessage = "An error occurred. Please try again.";
+        }
+    }
+}
